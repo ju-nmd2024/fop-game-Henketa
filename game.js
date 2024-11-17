@@ -2,9 +2,6 @@ function setup() {
   createCanvas(900, 600);
 }
 
-let x = 100;
-let y = 100;
-
 //The 3 screen states
 function startScreen(){
   background(105,190,150);
@@ -12,20 +9,20 @@ function startScreen(){
   fill(255,195,0);
   stroke(0);
   strokeWeight(3);
-  text("Press any button (unfinished)",300,550);
+  text("Click to start (unfinished)",300,550);
 }
 
 function gameScreen(){
   background(45,130,200);
-  fill(0);
+  fill(255);
   textSize(30);
   text("Steal the emerald",10,30);
   bgLab();
   masterEmerald();
-  sonicTails(500,700,0.23);
 }
 
 function endScreen(){
+  push();
   background(0,0,0);
   textFont('Verdana');
   textSize(65);
@@ -33,6 +30,7 @@ function endScreen(){
   stroke(0,100,190);
   strokeWeight(5);
   text("GAME OVER",250,250);
+  pop();
 }
 
 //bg,props,characters
@@ -76,13 +74,21 @@ function masterEmerald(){
   triangle(325,400,370,395,300,490);
   triangle(370,395,300,490,405,385);
   pop();
+
   //stand for emerald
+  push();
+  strokeWeight(2.3);
+  rect(348,588,7,100);
+  rect(445,588,7,100);
+  quad(331,575,469,575,454,590,346,590);
+  pop();
 }
-function sonicTails(x,y,s,reachEnd){
+function sonicTails(x,y,s,r){
   push();
   strokeWeight(4);
   translate(0,0);
   scale(s);
+  rotate(r);
 
 //Sonic Torso
 fill(0,100,200);
@@ -274,7 +280,61 @@ ellipse(x-112,y-297,20);
 pop();
 }
 
+let state = "start";
+let gameTimer = 0;
+let speed = 0;
+let x = 100;
+let y = 100;
+let r = 0;
 
 function draw() {
-  gameScreen();
+ x=x+ Math.cos(r) * speed;
+ y=y+ Math.sin(r) * speed;
+
+  /*
+  Reason for using "TFGH" instead of "WASD" is
+  because my "A" and "D" keys are missing, and
+  it's super inconvenient to try and use those
+  keys without them.
+  */
+  if (keyIsDown (70)){
+    r=r-0.05;
+  }
+  if (keyIsDown (72)){
+    r=r+0.05;
+  }
+  if (keyIsDown (71)){
+    speed = 5;
+  } else if (keyIsDown (84)){
+    speed = -5;
+  } else {
+    speed = 0;
+  }
+
+  //Screens
+  if (state === "start") {
+    startScreen();
+  } else if (state === "game") {
+    gameScreen();
+    push();
+    translate(x,y);
+    sonicTails(x,y,0.23,r);
+    pop();
+    //gameTimer = gameTimer + 1;
+    if (gameTimer >= 100) {
+      gameTimer = 0;
+      state = "end";
+    }
+  } else if (state === "end") {
+    endScreen();
+  }
 }
+
+function mouseClicked(){
+  if (state === "start") {
+    state = "game";
+  } else if (state === "end") {
+    state = "game";
+  }
+}
+
