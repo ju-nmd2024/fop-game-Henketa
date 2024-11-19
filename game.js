@@ -2,16 +2,14 @@ function setup() {
   createCanvas(900, 600);
 }
 
-//The 3 screen states
+//The 3 game states
 function startScreen(){
   background(105,190,150);
   textSize(25);
   fill(255,195,0);
   stroke(0);
   strokeWeight(3);
-  text("Click to start (unfinished)",300,550);
-  y=100;
-  ySpeed=0;
+  text("Click to start (unfinished)",width / 2,height / 2);
 }
 
 function gameScreen(){
@@ -292,27 +290,34 @@ pop();
 //Test ellipse
 push();
 fill(0,255,255);
-ellipse(x-400,y-500,50);
+ellipse(x-10,y+330,50);
 pop();
 }
 
 
-let state = "game";
+let state = "start";
 let gameTimer = 0;
 let speed = 0;
-let x = 0;
-let y = 0;
+
+//character position variables
+let x = 500;
+let y = 500;
 let r = 0;
-let gravy = 0.01;
+
+//game logic variables
+let gravy = 0.02;
 let ySpeed = 0;
 
 function draw() {
+
+  
  x=x+ Math.cos(r) * speed;
  y=y+ Math.sin(r) * speed;
- //ySpeed = ySpeed + gravy;
+ ySpeed = ySpeed + gravy;
  if(y<=500){
   y=y+ySpeed;
- } else if(y>=490 && x>=315 && x<=484){
+ } 
+ if(y>=490 && x>=315 && x<=484){
   state="win";
   x=100;
   y=100;
@@ -349,6 +354,7 @@ function draw() {
   //Screens
   if (state === "start") {
     startScreen();
+
   } else if (state === "game") {
     
     gameScreen();
@@ -361,13 +367,17 @@ function draw() {
       gameTimer = 0;
       state = "end";
     }
+
   } else if (state === "end") {
     endScreen();
+
   } else if (state === "win") {
     winScreen();
+
   }
 }
 
+//start or restart game
 function mouseClicked(){
   if (state === "start") {
     state = "game";
