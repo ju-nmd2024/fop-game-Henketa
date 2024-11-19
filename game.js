@@ -10,6 +10,8 @@ function startScreen(){
   stroke(0);
   strokeWeight(3);
   text("Click to start (unfinished)",300,550);
+  y=100;
+  ySpeed=0;
 }
 
 function gameScreen(){
@@ -31,6 +33,14 @@ function endScreen(){
   strokeWeight(5);
   text("GAME OVER",250,250);
   pop();
+}
+
+function winScreen(){
+  push();
+  background(100);
+  text("Emerald acquired!",250,250);
+  pop();
+  y=10;
 }
 
 //bg,props,characters
@@ -278,18 +288,43 @@ fill(255,255,255);
 ellipse(x-35,y-275,20);
 ellipse(x-112,y-297,20);
 pop();
+
+//Test ellipse
+push();
+fill(0,255,255);
+ellipse(x-400,y-500,50);
+pop();
 }
 
-let state = "start";
+
+let state = "game";
 let gameTimer = 0;
 let speed = 0;
-let x = 100;
-let y = 100;
+let x = 0;
+let y = 0;
 let r = 0;
+let gravy = 0.01;
+let ySpeed = 0;
 
 function draw() {
  x=x+ Math.cos(r) * speed;
  y=y+ Math.sin(r) * speed;
+ //ySpeed = ySpeed + gravy;
+ if(y<=500){
+  y=y+ySpeed;
+ } else if(y>=490 && x>=315 && x<=484){
+  state="win";
+  x=100;
+  y=100;
+  ySpeed=0;
+  r=0;
+ } else if(y<=510 && x<=900){
+  state="end";
+  x=100;
+  y=100;
+  ySpeed=0;
+  r=0;
+ }
 
   /*
   Reason for using "TFGH" instead of "WASD" is
@@ -315,6 +350,7 @@ function draw() {
   if (state === "start") {
     startScreen();
   } else if (state === "game") {
+    
     gameScreen();
     push();
     translate(x,y);
@@ -327,6 +363,8 @@ function draw() {
     }
   } else if (state === "end") {
     endScreen();
+  } else if (state === "win") {
+    winScreen();
   }
 }
 
@@ -335,6 +373,15 @@ function mouseClicked(){
     state = "game";
   } else if (state === "end") {
     state = "game";
+  } else if (state === "win") {
+    state = "game";
   }
 }
 
+//displayInfo();
+//function displayInfo(){
+  //fill(255);
+  //textSize(10);
+  //textAlign(LEFT,TOP);
+  //text("Velocity: " + vy.toFixed(1),10,50);
+//}
