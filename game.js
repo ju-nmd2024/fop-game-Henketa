@@ -327,7 +327,7 @@ let emeraldY = 100;
 //game logic variables
 let velocityY = 0.5;
 let velocityX = 0.2;
-let acceleration = 0.6;
+let acceleration = 0.4;
 
 
 function draw() {
@@ -358,12 +358,14 @@ function draw() {
     }
   
     //emerald hitbox
+    let maxSafeSpeed = 5;
+
     if(yPos >=1850 && xPos >=1415 && xPos <=2085) {
       console.log("sonic inside hitbox");
       state = "win";
       xPos = 400;
       yPos = 600;
-    } else if(yPos >=1450 && velocityY >=50){
+    } else if(yPos >=1830 && velocityY > maxSafeSpeed){
       console.log("sonic ded");
       state = "end";
       xPos = 400;
@@ -401,57 +403,11 @@ function mouseClicked() {
   }
 }
 
-//redo from scratch.
 /*
-function draw() {
+Reference:
+Vedang who helped me with the maxSafeSpeed variable
+and the velocityY > maxSafeSpeed in first else if-statement
+of emerald hitbox. To make it so you couldn't land too fast.
 
-//emerald hitbox
- if(yPos>=490 && xPos>=315 && xPos<=484){
-  state="win";
- 
- } else if(yPos<=510 && xPos<=900){
-  state="end";
- 
- }
-
-
-  //Screens
-  if (state === "game") {
-    startScreen();
-  } else if (state === "game") {
-    
-    gameScreen();
-  
-    sonicTails(xPos,yPos,0.23,rotation);
-
-    //gravity logic
-    yPos = yPos + velocityY;
-    velocityY =velocityY + acceleration;
-
-    //velocity decrease
-    if (keyIsDown (84)) {
-      velocityY = velocityY - 1;
-    }
-  
-
-    
-    if (state === "end") {
-    endScreen();
-  } else if (state === "win") {
-    winScreen();
-  }
-}
-/*
-function mouseIsPressed(){
-  console.log("iClicked");
-  if (state === "start") {
-    state = "game";
-  } else if (state === "end") {
-    state = "game";
-  } else if (state === "win") {
-    state = "game";
-  }
-}
-
-}
+line code 361, 368
 */
