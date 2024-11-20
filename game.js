@@ -9,9 +9,15 @@ function startScreen(){
   fill(255,195,0);
   stroke(0);
   strokeWeight(3);
-  text("Click to start (unfinished)",300,550);
-  y=100;
-  ySpeed=0;
+  text("Click to start",width / 2,550);
+  push();
+  textSize(65);
+  textAlign(CENTER);
+  strokeWeight(5);
+  text("Sonic & Tails steals the emerald",width / 2-220,150,600);
+  pop();
+  
+
 }
 
 function gameScreen(){
@@ -19,6 +25,10 @@ function gameScreen(){
   fill(255);
   textSize(30);
   text("Steal the emerald",10,30);
+  push();
+  textSize(20);
+  text("Do not land too fast",10,60);
+  pop();
   bgLab();
   masterEmerald();
 }
@@ -31,16 +41,27 @@ function endScreen(){
   fill(255);
   stroke(0,100,190);
   strokeWeight(5);
-  text("GAME OVER",250,250);
+  text("GAME OVER",width / 2,350);
+  pop();
+  push();
+  fill(255);
+  stroke(0,100,190);
+  text("Click to restart",width / 2+100,450);
   pop();
 }
 
 function winScreen(){
   push();
   background(100);
-  text("Emerald acquired!",250,250);
+  fill(255);
+  text("Emerald acquired!",width / 2,350);
   pop();
-  y=10;
+  push();
+  textSize(20);
+  fill(255);
+  text("Click to restart",width / 2+60,450);
+  pop();
+  
 }
 
 //bg,props,characters
@@ -64,33 +85,33 @@ function masterEmerald(){
   translate(100,150);
 
   //top half of emerald
-  ellipse(300,350,170,15);
-  triangle(215,350,225,354,197,382);
-  triangle(230,395,225,354,195,385);
-  triangle(260,357,225,354,230,395);
-  triangle(275,400,230,395,260,358);
-  triangle(275,400,300,358,260,357);
-  triangle(275,400,325,400,300,358);
-  triangle(340,357,325,400,300,358);
-  triangle(325,400,370,395,340,358);
-  triangle(375,354,370,395,340,357);
-  triangle(370,395,375,354,405,385);
-  triangle(385,350,375,354,403,382);
+  ellipse(x+200,y+250,170,15);
+  triangle(x+115,y+250,x+125,y+254,x+97,y+282);
+  triangle(x+130,y+295,x+125,y+254,x+95,y+285);
+  triangle(x+160,y+257,x+125,y+254,x+130,y+295);
+  triangle(x+175,y+300,x+130,y+295,x+160,y+258);
+  triangle(x+175,y+300,x+200,y+258,x+160,y+257);
+  triangle(x+175,y+300,x+225,y+300,x+200,y+258);
+  triangle(x+240,y+257,x+225,y+300,x+200,y+258);
+  triangle(x+225,y+300,x+270,y+295,x+240,y+258);
+  triangle(x+275,y+254,x+270,y+295,x+240,y+257);
+  triangle(x+270,y+295,x+275,y+254,x+305,y+285);
+  triangle(x+285,y+250,x+275,y+254,x+303,y+282);
 
   //bottom half of emerald
-  triangle(230,395,300,490,195,385);
-  triangle(275,400,230,395,300,490);
-  triangle(275,400,325,400,300,490);
-  triangle(325,400,370,395,300,490);
-  triangle(370,395,300,490,405,385);
+  triangle(x+130,y+295,x+200,y+390,x+95,y+285);
+  triangle(x+175,y+300,x+130,y+295,x+200,y+390);
+  triangle(x+175,y+300,x+225,y+300,x+200,y+390);
+  triangle(x+225,y+300,x+270,y+295,x+200,y+390);
+  triangle(x+270,y+295,x+200,y+390,x+305,y+285);
   pop();
 
   //stand for emerald
   push();
   strokeWeight(2.3);
-  rect(348,588,7,100);
-  rect(445,588,7,100);
-  quad(331,575,469,575,454,590,346,590);
+  rect(x+248,y+488,7,100);
+  rect(x+345,y+488,7,100);
+  quad(x+231,y+475,x+369,y+475,x+354,y+490,x+246,y+490);
   pop();
 }
 function sonicTails(x,y,s,r){
@@ -288,87 +309,141 @@ fill(255,255,255);
 ellipse(x-35,y-275,20);
 ellipse(x-112,y-297,20);
 pop();
-
-//Test ellipse
-push();
-fill(0,255,255);
-ellipse(x-400,y-500,50);
-pop();
 }
 
+let state = "start";
+let x = 100;
+let y = 100;
 
-let state = "game";
-let gameTimer = 0;
-let speed = 0;
-let x = 0;
-let y = 0;
-let r = 0;
-let gravy = 0.01;
-let ySpeed = 0;
+//character position variables
+let xPos = 400;
+let yPos = 600;
+let rotation = 0;
+
+//emerald position variables
+let emeraldX = 100;
+let emeraldY = 100;
+
+//game logic variables
+let velocityY = 0.5;
+let velocityX = 0.2;
+let acceleration = 0.6;
+
 
 function draw() {
- x=x+ Math.cos(r) * speed;
- y=y+ Math.sin(r) * speed;
- //ySpeed = ySpeed + gravy;
- if(y<=500){
-  y=y+ySpeed;
- } else if(y>=490 && x>=315 && x<=484){
+
+  //screens
+  if (state === "start") {
+    startScreen();
+  } else if (state === "game") {
+    gameScreen();
+    sonicTails(xPos,yPos,0.23,rotation);
+
+    //gravity logic
+    yPos = yPos + velocityY;
+    xPos = xPos + velocityX;
+    velocityY = velocityY + acceleration;
+    
+
+    //velocity decrease
+    if (keyIsDown (84)) {
+    velocityY = velocityY - 1;
+    } else if (keyIsDown (71)) {
+      velocityY = velocityY + 1;
+    }
+    if (keyIsDown(72)) {
+      velocityX = velocityX + 1;
+    } else if (keyIsDown(70)) {
+      velocityX = velocityX - 1;
+    }
+  
+    //emerald hitbox
+    if(yPos >=1850 && xPos >=1415 && xPos <=2085) {
+      console.log("sonic inside hitbox");
+      state = "win";
+      xPos = 400;
+      yPos = 600;
+    } else if(yPos >=1450 && velocityY >=50){
+      console.log("sonic ded");
+      state = "end";
+      xPos = 400;
+      yPos = 600;
+    } else if (yPos >=2400 && xPos >=315) {
+      console.log("sonic ded");
+      state = "end";
+      xPos = 400;
+      yPos = 600;
+    } 
+  }
+
+  
+  if (state === "win") {
+    winScreen();
+    velocityY = 0;
+    velocityX = 0;
+  } else if (state === "end") {
+    endScreen();
+    velocityY = 0;
+    velocityX = 0;
+  }
+
+
+
+}
+
+function mouseClicked() {
+  console.log("clicking works!");
+  state = "game";
+  if (state === "win") {
+    state = "game";
+  } else if (state === "end") {
+    state = "game";
+  }
+}
+
+//redo from scratch.
+/*
+function draw() {
+
+//emerald hitbox
+ if(yPos>=490 && xPos>=315 && xPos<=484){
   state="win";
-  x=100;
-  y=100;
-  ySpeed=0;
-  r=0;
- } else if(y<=510 && x<=900){
+ 
+ } else if(yPos<=510 && xPos<=900){
   state="end";
-  x=100;
-  y=100;
-  ySpeed=0;
-  r=0;
+ 
  }
 
-  /*
-  Reason for using "TFGH" instead of "WASD" is
-  because my "A" and "D" keys are missing, and
-  it's super inconvenient to try and use those
-  keys without them.
-  */
-  if (keyIsDown (70)){
-    r=r-0.05;
-  }
-  if (keyIsDown (72)){
-    r=r+0.05;
-  }
-  if (keyIsDown (71)){
-    speed = 5;
-  } else if (keyIsDown (84)){
-    speed = -5;
-  } else {
-    speed = 0;
-  }
 
   //Screens
-  if (state === "start") {
+  if (state === "game") {
     startScreen();
   } else if (state === "game") {
     
     gameScreen();
-    push();
-    translate(x,y);
-    sonicTails(x,y,0.23,r);
-    pop();
-    //gameTimer = gameTimer + 1;
-    if (gameTimer >= 100) {
-      gameTimer = 0;
-      state = "end";
+  
+    sonicTails(xPos,yPos,0.23,rotation);
+
+    //gravity logic
+    yPos = yPos + velocityY;
+    velocityY =velocityY + acceleration;
+
+    //velocity decrease
+    if (keyIsDown (84)) {
+      velocityY = velocityY - 1;
     }
-  } else if (state === "end") {
+  
+
+    
+    if (state === "end") {
     endScreen();
   } else if (state === "win") {
     winScreen();
   }
 }
-
-function mouseClicked(){
+/*
+function mouseIsPressed(){
+  console.log("iClicked");
   if (state === "start") {
     state = "game";
   } else if (state === "end") {
@@ -378,10 +453,5 @@ function mouseClicked(){
   }
 }
 
-//displayInfo();
-//function displayInfo(){
-  //fill(255);
-  //textSize(10);
-  //textAlign(LEFT,TOP);
-  //text("Velocity: " + vy.toFixed(1),10,50);
-//}
+}
+*/
